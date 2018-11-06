@@ -43,6 +43,19 @@ app.post("/login", (req,res)=>{
 		console.log('error');
 	}
 })
+
+app.post("/register", (req,res) => {
+	if(req.body.username && req.body.password){
+		const newUser = {
+			user: req.body.username,
+			password: req.body.password
+		}
+		database.push(newUser);
+		res.json("Added New User");
+	}else{
+		res.status(400).json("error creating new user, try again");
+	}
+})
 app.listen(3001, function(){
 		console.log("listening");
 })
