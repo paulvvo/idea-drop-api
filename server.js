@@ -37,7 +37,11 @@ app.get("/", (req,res)=>{
 });
 
 app.post("/login", (req,res)=>{
-
+	if(req.body.name === database[0].name){
+		res.status(200).json(database[0]);
+	}else{
+		console.log('error');
+	}
 })
 app.listen(3001, function(){
 		console.log("listening");
