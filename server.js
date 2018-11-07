@@ -20,9 +20,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
 
-knex.select('email').from('login')
-.then(console.log);
-
 var database = [
 	{
 		name: "jack",
@@ -54,44 +51,50 @@ app.get("/", (req,res)=>{
 });
 
 app.post("/login", (req,res)=>{
-	if(req.body.email === database[database.length -1].email){
-		bcrypt.compare(req.body.password, database[database.length -1].hash, function(err, results) {
-			if(err){
-				res.status(400).json("Error with Login");
+	const {email, password}  = req.body;
+	knex('logins')
+	.where({email:email})
+	.returning('*')
+	.then(returningUser =>{
+		if(returningUser.length>0 && returningUser[0]){
+			bcrypt.compare(password, returningUser[0].hash, function(err, results) {
+				if(err)
+					res.status(400).json("Error with Login");
 
-			}else{
-				res.status(200).json("Succ");
-			}
-		});
+				if(results){
+					console.log(results);
+					res.status(200).json("Succ");
+				}else{
+					res.status(400).json("Fail, Check Password");
+				}
 
-	}else{
-		console.log('error');
-	}
+			});
+		}else{
+			res.status(400).json("Fail, Check Email");
+		}
+	})
+	.catch(err => res.status(400).json(err));
 
 
-	//
-	// bcrypt.compare(someOtherPlaintextPassword, hash, function(err, res) {
-	// 		// res == false
-	// 		console.log(res);
-	// });
 })
 
 app.post("/register", (req,res) => {
-	if(req.body.email && req.body.password){
+	const {email,password} = req.body;
 
-		bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
-		  // Store hash in your password DB.
+	if(email && password){
+		bcrypt.hash(password, saltRounds, function(err, hash) {
 			if(err){
 				res.status(400).json("There was a registration error");
 			}
-			console.log(hash);
 			const newUser = {
-				email:req.body.email,
-				hash: hash,
+				email,
+				hash,
 			}
-			database.push(newUser);
-			res.status(200).json(newUser)
-
+			knex('logins')
+			.insert(newUser)
+			.returning('*')
+			.then(returningData => res.status(200).json(returningData[0]))
+			.catch(err => res.status(400).json(err));
 		});
 	}
 })
