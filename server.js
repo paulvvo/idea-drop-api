@@ -2,15 +2,26 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host : 'localhost',
+    user : 'postgres',
+    password : 'password',
+    database : 'ideadropapi'
+  }
+});
 
 var app = express();
-
 const saltRounds = 10;
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
+
+knex.select('email').from('login')
+.then(console.log);
 
 var database = [
 	{
@@ -39,7 +50,7 @@ var database = [
 	}
 ]
 app.get("/", (req,res)=>{
-	res.send("hello world");
+	res.json("helloworld");
 });
 
 app.post("/login", (req,res)=>{
