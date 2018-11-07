@@ -1,8 +1,11 @@
-var express = require("express");
-var cors = require("cors");
-var bodyParser = require("body-parser");
+const express = require("express");
+const cors = require("cors");
+const bcrypt = require("bcrypt");
+const bodyParser = require("body-parser");
 
 var app = express();
+
+const saltRounds = 10;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -40,30 +43,54 @@ app.get("/", (req,res)=>{
 });
 
 app.post("/login", (req,res)=>{
-	if(req.body.name === database[0].name){
-		res.status(200).json(database[0]);
+	if(req.body.email === database[database.length -1].email){
+		bcrypt.compare(req.body.password, database[database.length -1].hash, function(err, results) {
+			if(err){
+				res.status(400).json("Error with Login");
+
+			}else{
+				res.status(200).json("Succ");
+			}
+		});
+
 	}else{
 		console.log('error');
 	}
+
+
+	//
+	// bcrypt.compare(someOtherPlaintextPassword, hash, function(err, res) {
+	// 		// res == false
+	// 		console.log(res);
+	// });
 })
 
 app.post("/register", (req,res) => {
-	if(req.body.username && req.body.password){
-		const newUser = {
-			user: req.body.username,
-			password: req.body.password
-		}
-		database.push(newUser);
-		res.json("Added New User");
-	}else{
-		res.status(400).json("error creating new user, try again");
+	if(req.body.email && req.body.password){
+
+		bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+		  // Store hash in your password DB.
+			if(err){
+				res.status(400).json("There was a registration error");
+			}
+			console.log(hash);
+			const newUser = {
+				email:req.body.email,
+				hash: hash,
+			}
+			database.push(newUser);
+			res.status(200).json(newUser)
+
+		});
 	}
 })
+
+
+
+
 app.listen(3001, function(){
-		console.log("listening");
+		console.log("server is listening");
 })
-
-
 // Route Planning
 // -Sign In Route POST
 // -Register Route POST
