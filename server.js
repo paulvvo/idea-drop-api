@@ -72,6 +72,10 @@ app.post("/register", (req,res) => {
 	}
 })
 
+app.get("/ideadrop/:id", (req,res) => {
+	res.json("test");
+})
+
 app.post("/ideadrop", (req,res)=>{
 	res.json("idea drop");
 	//name
@@ -79,13 +83,18 @@ app.post("/ideadrop", (req,res)=>{
 	//price
 	//description
 	//category
+
+
 })
 
-app.put("/ideadrop", (req,res) => {
+app.put("/ideadrop/:id", (req,res) => {
 	res.json("working");
 })
 
-
+app.delete("./ideadrop/:id", (req,res) => {
+	res.json("delete route");
+	//gets the id of an object
+})
 
 
 app.listen(3001, function(){
