@@ -74,6 +74,8 @@ app.post("/register", (req,res) => {
 
 app.get("/ideadrop/:id", (req,res) => {
 	res.json("test");
+	//returns the object with the same id as the the one provided
+
 })
 
 app.post("/ideadrop", (req,res)=>{
@@ -83,17 +85,19 @@ app.post("/ideadrop", (req,res)=>{
 	//price
 	//description
 	//category
+	//owner
 
 
 })
 
 app.put("/ideadrop/:id", (req,res) => {
 	res.json("working");
+	//gets the id from the parameter and finds the object in database and updates it
 })
 
 app.delete("./ideadrop/:id", (req,res) => {
 	res.json("delete route");
-	//gets the id of an object
+	//gets the id of an object and deletes it
 })
 
 
