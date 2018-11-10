@@ -72,6 +72,19 @@ app.post("/register", (req,res) => {
 	}
 })
 
+app.post("/ideadrop", (req,res)=>{
+	res.json("idea drop");
+	//name
+	//picture
+	//price
+	//description
+	//category
+})
+
+app.put("/ideadrop", (req,res) => {
+	res.json("working");
+})
+
 
 
 
