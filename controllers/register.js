@@ -1,4 +1,5 @@
-const handleRegister = (req,res,knex) => {
+const handleRegister = (req,res,knex,bcrypt) => {
+	const saltRounds = 10;
 	const {email,password} = req.body;
 
 	if(email && password){

@@ -13,46 +13,23 @@ const express = require("express"),
 			});
 
 var app = express();
-const saltRounds = 10;
 
+//Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
 //Controllers
 const ideadrop = require("./controllers/ideadrop"),
-			register = require('./controllers/register');
+			register = require('./controllers/register'),
+			login 	 = require("./controllers/login");
 
+//Login and Register Routes
 app.post("/login", (req,res)=>{
-	const {email, password}  = req.body;
-	knex('logins')
-	.where({email:email})
-	.returning('*')
-	.then(returningUser =>{
-		if(returningUser.length>0 && returningUser[0]){
-			bcrypt.compare(password, returningUser[0].hash, function(err, results) {
-				if(err)
-					res.status(400).json("Error with Login");
-
-				if(results){
-					console.log(results);
-					res.status(200).json("Succ");
-				}else{
-					res.status(400).json("Fail, Check Password");
-				}
-
-			});
-		}else{
-			res.status(400).json("Fail, Check Email");
-		}
-	})
-	.catch(err => res.status(400).json(err));
-
-
+	login.handleLogin(req,res,knex,bcrypt);
 })
-
 app.post("/register", (req,res) => {
-	register.handleRegister(req,res,knex);
+	register.handleRegister(req,res,knex,bcrypt);
 });
 
 //Idea Drop Routes
