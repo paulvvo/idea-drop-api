@@ -22,11 +22,6 @@ app.use(bodyParser.urlencoded({extended:true}));
 //Controllers
 const ideadrop = require("./controllers/ideadrop");
 
-
-app.get("/", (req,res)=>{
-	res.json("helloworld");
-});
-
 app.post("/login", (req,res)=>{
 	const {email, password}  = req.body;
 	knex('logins')
@@ -77,24 +72,17 @@ app.post("/register", (req,res) => {
 })
 
 app.get("/ideadrop/:id", (req,res) => {
-	res.json("test");
-	//returns the object with the same id as the the one provided
-
-})
-
+	ideadrop.handleGetDrop(req,res,knex);
+});
 app.post("/ideadrop", (req,res)=>{
 	ideadrop.handleCreateDrop(req,res,knex);
-})
-
+});
 app.put("/ideadrop/:id", (req,res) => {
-	res.json("working");
-	//gets the id from the parameter and finds the object in database and updates it
-})
-
+	ideadrop.handleUpdateDrop(req,res,knex);
+});
 app.delete("./ideadrop/:id", (req,res) => {
-	res.json("delete route");
-	//gets the id of an object and deletes it
-})
+	ideadrop.handleDeleteDrop(req,res,knex);
+});
 
 
 app.listen(3001, function(){
