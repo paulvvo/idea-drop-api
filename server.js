@@ -19,6 +19,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
+//Controllers
+const ideadrop = require("./controllers/ideadrop");
+
+
 app.get("/", (req,res)=>{
 	res.json("helloworld");
 });
@@ -79,14 +83,7 @@ app.get("/ideadrop/:id", (req,res) => {
 })
 
 app.post("/ideadrop", (req,res)=>{
-	//insert into drops(name, picture, price, description, category, owner) values(name, picture, price, description, category, owner)
-
-	knex('drops')
-	.insert(req.body)
-	.returning("*")
-	.then(createdDrop => res.json(createdDrop))
-	.catch(err => res.status(400).json(err));
-
+	ideadrop.handleCreateDrop(req,res,knex);
 })
 
 app.put("/ideadrop/:id", (req,res) => {
