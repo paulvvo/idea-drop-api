@@ -79,14 +79,13 @@ app.get("/ideadrop/:id", (req,res) => {
 })
 
 app.post("/ideadrop", (req,res)=>{
-	res.json("idea drop");
-	//name
-	//picture
-	//price
-	//description
-	//category
-	//owner
+	//insert into drops(name, picture, price, description, category, owner) values(name, picture, price, description, category, owner)
 
+	knex('drops')
+	.insert(req.body)
+	.returning("*")
+	.then(createdDrop => res.json(createdDrop))
+	.catch(err => res.status(400).json(err));
 
 })
 
