@@ -1,19 +1,8 @@
 const handleCreateDrop = (req,res,knex) => {
-	//insert into drops(name, picture, price, description, category, owner)
-	//values(name, picture, price, description, category, owner)
-	const {owner, name, category, picture, price, description} = req.body;
+	//insert into drops and dropsdesc
 
-	// knex('drops')
-	// .insert({
-	// 	name,
-	// 	owner,
-	// 	category,
-	// 	picture,
-	// 	price
-	// })
-	// .returning("*")
-	// .then(createdDrop => res.json(createdDrop))
-	// .catch(err => res.status(400).json(err));
+	const {owner, name, category, picture, price, description} = req.body;
+	
 
 	knex.transaction(trx => {
 		trx('drops')
