@@ -7,36 +7,37 @@ const handleCreateDrop = (req,res,knex) => {
 	const {errors, isValid} = validateDropInput(req.body);
 	if(!isValid){
 		res.status(400).json(errors);
-	}
-
-	knex.transaction(trx => {
-		trx('drops')
-		.insert({
-			name,
-			picture,
-			category,
-			owner,
-			price
-		})
-		.returning("*")
-		.then(createdDrop =>{
-			return trx('dropsdesc')
+	}else{
+		knex.transaction(trx => {
+			trx('drops')
 			.insert({
-				name:createdDrop[0].name,
-				email:createdDrop[0].owner,
-				description,
+				name,
+				picture,
+				category,
+				owner,
+				price
 			})
 			.returning("*")
-			.then(createdDropDesc => {
-				// console.log(createdDropDesc[0]);
-				// console.log(createdDrop[0]);
-				res.json(createdDropDesc[0]);
+			.then(createdDrop =>{
+				return trx('dropsdesc')
+				.insert({
+					name:createdDrop[0].name,
+					email:createdDrop[0].owner,
+					description,
+				})
+				.returning("*")
+				.then(createdDropDesc => {
+					// console.log(createdDropDesc[0]);
+					// console.log(createdDrop[0]);
+					res.json(createdDropDesc[0]);
+				})
 			})
+			.then(trx.commit)
+			.catch(trx.rollback)
 		})
-		.then(trx.commit)
-		.catch(trx.rollback)
-	})
-	.catch(err => res.status(400).json("Idea Drop was not created"));
+		.catch(err => res.status(400).json("Idea Drop was not created"));
+	}
+
 
 }
 
