@@ -1,8 +1,13 @@
+const validateDropInput = require("../validation/ideadrop");
+
 const handleCreateDrop = (req,res,knex) => {
 	//insert into drops and dropsdesc
 
 	const {owner, name, category, picture, price, description} = req.body;
-	
+	const {errors, isValid} = validateDropInput(req.body);
+	if(!isValid){
+		res.status(400).json(errors);
+	}
 
 	knex.transaction(trx => {
 		trx('drops')
