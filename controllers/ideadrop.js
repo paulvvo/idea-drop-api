@@ -1,12 +1,49 @@
 const handleCreateDrop = (req,res,knex) => {
 	//insert into drops(name, picture, price, description, category, owner)
 	//values(name, picture, price, description, category, owner)
+	const {owner, name, category, picture, price, description} = req.body;
 
-	knex('drops')
-	.insert(req.body)
-	.returning("*")
-	.then(createdDrop => res.json(createdDrop))
-	.catch(err => res.status(400).json(err));
+	// knex('drops')
+	// .insert({
+	// 	name,
+	// 	owner,
+	// 	category,
+	// 	picture,
+	// 	price
+	// })
+	// .returning("*")
+	// .then(createdDrop => res.json(createdDrop))
+	// .catch(err => res.status(400).json(err));
+
+	knex.transaction(trx => {
+		trx('drops')
+		.insert({
+			name,
+			picture,
+			category,
+			owner,
+			price
+		})
+		.returning("*")
+		.then(createdDrop =>{
+			return trx('dropsdesc')
+			.insert({
+				name:createdDrop[0].name,
+				email:createdDrop[0].owner,
+				description,
+			})
+			.returning("*")
+			.then(createdDropDesc => {
+				// console.log(createdDropDesc[0]);
+				// console.log(createdDrop[0]);
+				res.json(createdDropDesc[0]);
+			})
+		})
+		.then(trx.commit)
+		.catch(trx.rollback)
+	})
+	.catch(err => res.status(400).json("Idea Drop was not created"));
+
 }
 
 const handleGetDrop = (req,res,knex) => {
